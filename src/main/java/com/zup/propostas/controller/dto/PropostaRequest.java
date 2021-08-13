@@ -1,6 +1,7 @@
 package com.zup.propostas.controller.dto;
 
 import com.zup.propostas.annotation.CpfCnpj;
+import com.zup.propostas.annotation.ExistsSameProposal;
 import com.zup.propostas.modelo.Proposta;
 
 import javax.validation.constraints.Email;
@@ -10,7 +11,7 @@ import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public class PropostaRequest {
-    @NotBlank @CpfCnpj
+    @NotBlank @CpfCnpj @ExistsSameProposal
     private String documento;
     @NotBlank @Email
     private String email;

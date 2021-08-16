@@ -31,7 +31,6 @@ public class PropostaController {
     private ConsultaDadosSolicitante consultaDadosSolicitante;
 
     @PostMapping
-    @Transactional
     public ResponseEntity cadastrar(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriComponentsBuilder){
         Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(propostaRequest.getDocumento());
 
@@ -50,6 +49,7 @@ public class PropostaController {
         }catch (FeignException e){
             proposta.atualizaStatus(ResultadoSolicitacao.COM_RESTRICAO);
         }
+        propostaRepository.save(proposta);
 
         URI uri = uriComponentsBuilder.path("propostas/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity.created(uri).build();

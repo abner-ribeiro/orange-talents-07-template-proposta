@@ -1,9 +1,6 @@
 package com.zup.propostas.controller;
 
-import com.zup.propostas.controller.dto.AnaliseApiRequest;
-import com.zup.propostas.controller.dto.AnaliseApiResponse;
-import com.zup.propostas.controller.dto.CartaoApiResponse;
-import com.zup.propostas.controller.dto.PropostaRequest;
+import com.zup.propostas.controller.dto.*;
 import com.zup.propostas.modelo.Cartao;
 import com.zup.propostas.modelo.Proposta;
 import com.zup.propostas.modelo.ResultadoSolicitacao;
@@ -51,5 +48,15 @@ public class PropostaController {
 
         URI uri = uriComponentsBuilder.path("propostas/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity encontrar(@PathVariable Long id){
+        Optional<Proposta> possivelProposta = propostaRepository.findById(id);
+        if(possivelProposta.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        PropostaResponse propostaResponse = new PropostaResponse(possivelProposta.get());
+        return ResponseEntity.ok().body(propostaResponse);
     }
 }

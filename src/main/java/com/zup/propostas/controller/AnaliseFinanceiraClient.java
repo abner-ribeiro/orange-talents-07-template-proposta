@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.Valid;
 
 @FeignClient(name = "solicitacao", url = "${analise-financeira.host}")
-public interface ConsultaDadosSolicitante {
+public interface AnaliseFinanceiraClient {
 
-    @PostMapping("/api/solicitacao")
+    @PostMapping("${analise-financeira.analisa-proposta}")
     AnaliseApiResponse consultaDados(@RequestBody @Valid AnaliseApiRequest analiseApiRequest);
 }

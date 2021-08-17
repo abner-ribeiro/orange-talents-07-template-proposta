@@ -30,6 +30,9 @@ public class Proposta {
     @Enumerated(EnumType.STRING)
     private StatusProposta status;
 
+    @OneToOne(cascade = {CascadeType.MERGE})
+    private Cartao cartao;
+
 
     @Deprecated
     public Proposta(){};
@@ -57,5 +60,13 @@ public class Proposta {
 
     public String getNome() {
         return nome;
+    }
+
+    public Cartao getCartao() {
+        return cartao;
+    }
+
+    public void associaCartao(Cartao cartao) {
+        this.cartao = cartao;
     }
 }

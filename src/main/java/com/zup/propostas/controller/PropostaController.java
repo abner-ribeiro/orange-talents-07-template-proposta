@@ -2,7 +2,9 @@ package com.zup.propostas.controller;
 
 import com.zup.propostas.controller.dto.AnaliseApiRequest;
 import com.zup.propostas.controller.dto.AnaliseApiResponse;
+import com.zup.propostas.controller.dto.CartaoApiResponse;
 import com.zup.propostas.controller.dto.PropostaRequest;
+import com.zup.propostas.modelo.Cartao;
 import com.zup.propostas.modelo.Proposta;
 import com.zup.propostas.modelo.ResultadoSolicitacao;
 import com.zup.propostas.repository.PropostaRepository;
@@ -11,13 +13,9 @@ import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
@@ -28,7 +26,7 @@ public class PropostaController {
     @Autowired
     private PropostaRepository propostaRepository;
     @Autowired
-    private ConsultaDadosSolicitante consultaDadosSolicitante;
+    private AnaliseFinanceiraClient analiseFinanceiraClient;
 
     @PostMapping
     public ResponseEntity cadastrar(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriComponentsBuilder){
@@ -44,7 +42,7 @@ public class PropostaController {
 
         try {
             AnaliseApiRequest analiseApiRequest = new AnaliseApiRequest(proposta);
-            AnaliseApiResponse analiseApiResponse = consultaDadosSolicitante.consultaDados(analiseApiRequest);
+            AnaliseApiResponse analiseApiResponse = analiseFinanceiraClient.consultaDados(analiseApiRequest);
             proposta.atualizaStatus(analiseApiResponse.getResultadoSolicitacao());
         }catch (FeignException e){
             proposta.atualizaStatus(ResultadoSolicitacao.COM_RESTRICAO);

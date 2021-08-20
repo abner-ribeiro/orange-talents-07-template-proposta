@@ -13,39 +13,20 @@ public class Bloqueio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String bloqueioApiId;
-    private LocalDateTime bloqueadoEm;
-    private String sistemaResponsavel;
-    private Boolean ativo;
+    private LocalDateTime bloqueadoEm = LocalDateTime.now();
+    @NotBlank
+    private String ipOrigem;
+    @NotBlank
+    private String userAgent;
     @ManyToOne
     private Cartao cartao;
 
     @Deprecated
     public Bloqueio(){}
 
-    public Bloqueio(String bloqueioApiId, LocalDateTime bloqueadoEm, String sistemaResponsavel, Boolean ativo) {
-        this.bloqueioApiId = bloqueioApiId;
-        this.bloqueadoEm = bloqueadoEm;
-        this.sistemaResponsavel = sistemaResponsavel;
-        this.ativo = ativo;
-    }
-
-    public Bloqueio(BloqueioCartaoApiResponse bloqueioCartaoApiResponse) {
-        this.bloqueioApiId = bloqueioCartaoApiResponse.getId();
-        this.bloqueadoEm = bloqueioCartaoApiResponse.getBloqueadoEm();
-        this.sistemaResponsavel = bloqueioCartaoApiResponse.getSistemaResponsavel();
-        this.ativo = bloqueioCartaoApiResponse.getAtivo();
-    }
-
-    @Override
-    public String toString() {
-        return "Bloqueio{" +
-                "id=" + id +
-                ", bloqueioApiId='" + bloqueioApiId + '\'' +
-                ", bloqueadoEm=" + bloqueadoEm +
-                ", sistemaResponsavel='" + sistemaResponsavel + '\'' +
-                ", ativo=" + ativo +
-                ", cartao=" + cartao +
-                '}';
+    public Bloqueio(String ipOrigem, String userAgent, Cartao cartao) {
+        this.ipOrigem = ipOrigem;
+        this.userAgent = userAgent;
+        this.cartao = cartao;
     }
 }

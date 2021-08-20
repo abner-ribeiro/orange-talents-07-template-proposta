@@ -1,7 +1,5 @@
 package com.zup.propostas.controller.dto;
 
-import com.zup.propostas.modelo.Vencimento;
-
 import java.time.LocalDateTime;
 
 public class VencimentoCartaoApiResponse {
@@ -25,9 +23,5 @@ public class VencimentoCartaoApiResponse {
 
     public LocalDateTime getDataDeCriacao() {
         return dataDeCriacao;
-    }
-
-    public Vencimento toModel() {
-        return new Vencimento(id,dia,dataDeCriacao);
     }
 }

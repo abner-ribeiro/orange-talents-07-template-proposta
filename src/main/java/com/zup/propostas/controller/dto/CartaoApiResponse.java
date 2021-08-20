@@ -37,19 +37,7 @@ public class CartaoApiResponse {
     }
 
     public Cartao toModel(){
-        Renegociacao renegociacao = null;
-        Vencimento vencimento = null;
-        List<Bloqueio> bloqueios = this.bloqueios.stream().map(Bloqueio::new).collect(Collectors.toList());
-       List<AvisoViagem> avisos = this.avisos.stream().map(AvisoViagem::new).collect(Collectors.toList());
-       List<CarteiraDigital> carteiras = this.carteiras.stream().map(CarteiraDigital::new).collect(Collectors.toList());
-       List<Parcela> parcelas = this.parcelas.stream().map(Parcela::new).collect(Collectors.toList());
-
-       if(this.renegociacao != null)
-            renegociacao = this.renegociacao.toModel();
-       if(this.vencimento != null)
-            vencimento = this.vencimento.toModel();
-
-       return new Cartao(id,emitidoEm,titular,bloqueios,avisos,carteiras,parcelas,limite,renegociacao,vencimento);
+       return new Cartao(id,emitidoEm,titular,limite);
     }
 
     public String getId() {

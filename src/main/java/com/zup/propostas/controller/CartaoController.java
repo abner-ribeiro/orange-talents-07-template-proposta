@@ -38,7 +38,7 @@ public class CartaoController {
         Biometria biometria = biometriaRequest.toModel(cartao);
 
         biometriaRepository.save(biometria);
-        
+
         URI uri = uriComponentsBuilder.path("/biometrias/{id}").buildAndExpand(biometria.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }

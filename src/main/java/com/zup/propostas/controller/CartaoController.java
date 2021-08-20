@@ -1,6 +1,8 @@
 package com.zup.propostas.controller;
 
 import com.zup.propostas.controller.dto.BiometriaRequest;
+import com.zup.propostas.controller.dto.OrdemBloqueioApiRequest;
+import com.zup.propostas.controller.dto.OrdemBloqueioApiResponse;
 import com.zup.propostas.modelo.Biometria;
 import com.zup.propostas.modelo.Bloqueio;
 import com.zup.propostas.modelo.Cartao;
@@ -8,7 +10,9 @@ import com.zup.propostas.modelo.StatusCartao;
 import com.zup.propostas.repository.BiometriaRepository;
 import com.zup.propostas.repository.BloqueioRepository;
 import com.zup.propostas.repository.CartaoRepository;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,6 +31,8 @@ public class CartaoController {
     private BiometriaRepository biometriaRepository;
     @Autowired
     private BloqueioRepository bloqueioRepository;
+    @Autowired
+    private CartoesClient cartoesClient;
 
     @PostMapping("/{numeroCartao}/biometrias")
     public ResponseEntity cadastrar(@PathVariable String numeroCartao, @RequestBody @Valid BiometriaRequest biometriaRequest, UriComponentsBuilder uriComponentsBuilder){
@@ -62,10 +68,17 @@ public class CartaoController {
         }
         Bloqueio bloqueio = new Bloqueio(ipAddress,userAgent,cartao);
 
+        try{
+            OrdemBloqueioApiRequest bloqueioRequest = new OrdemBloqueioApiRequest("Proposta");
+            cartoesClient.bloqueiaCartao(numeroCartao,bloqueioRequest);
+        }catch (FeignException e){
+            System.out.println("excecao: "+e);
+            return ResponseEntity.internalServerError().build();
+        }
         bloqueioRepository.save(bloqueio);
         cartao.bloqueiaCartao();
         cartaoRepository.save(cartao);
-        
+
         return ResponseEntity.ok().build();
     }
 }

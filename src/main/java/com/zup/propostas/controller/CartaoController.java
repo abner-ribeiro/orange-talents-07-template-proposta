@@ -1,12 +1,11 @@
 package com.zup.propostas.controller;
 
+import com.zup.propostas.controller.dto.AvisoViagemRequest;
 import com.zup.propostas.controller.dto.BiometriaRequest;
 import com.zup.propostas.controller.dto.OrdemBloqueioApiRequest;
 import com.zup.propostas.controller.dto.OrdemBloqueioApiResponse;
-import com.zup.propostas.modelo.Biometria;
-import com.zup.propostas.modelo.Bloqueio;
-import com.zup.propostas.modelo.Cartao;
-import com.zup.propostas.modelo.StatusCartao;
+import com.zup.propostas.modelo.*;
+import com.zup.propostas.repository.AvisoViagemRepository;
 import com.zup.propostas.repository.BiometriaRepository;
 import com.zup.propostas.repository.BloqueioRepository;
 import com.zup.propostas.repository.CartaoRepository;
@@ -33,6 +32,8 @@ public class CartaoController {
     private BloqueioRepository bloqueioRepository;
     @Autowired
     private CartoesClient cartoesClient;
+    @Autowired
+    private AvisoViagemRepository avisoViagemRepository;
 
     @PostMapping("/{numeroCartao}/biometrias")
     public ResponseEntity cadastrar(@PathVariable String numeroCartao, @RequestBody @Valid BiometriaRequest biometriaRequest, UriComponentsBuilder uriComponentsBuilder){
@@ -78,6 +79,25 @@ public class CartaoController {
         bloqueioRepository.save(bloqueio);
         cartao.bloqueiaCartao();
         cartaoRepository.save(cartao);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{numeroCartao}/avisos")
+    public ResponseEntity avisoViagem(@PathVariable String numeroCartao,@RequestBody @Valid AvisoViagemRequest avisoViagemRequest, HttpServletRequest request){
+        Optional<Cartao> possivelCartao = cartaoRepository.findByNumeroCartao(numeroCartao);
+        String userAgent = request.getHeader("User-Agent");
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        if(possivelCartao.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        Cartao cartao = possivelCartao.get();
+
+        AvisoViagem avisoViagem = avisoViagemRequest.toModel(ipAddress,userAgent,cartao);
+        avisoViagemRepository.save(avisoViagem);
 
         return ResponseEntity.ok().build();
     }

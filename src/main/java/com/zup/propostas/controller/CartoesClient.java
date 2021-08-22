@@ -1,8 +1,6 @@
 package com.zup.propostas.controller;
 
-import com.zup.propostas.controller.dto.CartaoApiResponse;
-import com.zup.propostas.controller.dto.OrdemBloqueioApiRequest;
-import com.zup.propostas.controller.dto.OrdemBloqueioApiResponse;
+import com.zup.propostas.controller.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,4 +13,7 @@ public interface CartoesClient {
 
     @PostMapping("${accounts.bloqueiaCartao}")
     OrdemBloqueioApiResponse bloqueiaCartao(@PathVariable String id, @RequestBody OrdemBloqueioApiRequest request);
+
+    @PostMapping("${accounts.avisaViagemCartao}")
+    OrdemAvisoViagemApiResponse avisaViagem(@PathVariable String id, OrdemAvisoViagemApiRequest ordemAvisoViagemApiRequest);
 }

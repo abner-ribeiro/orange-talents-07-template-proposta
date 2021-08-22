@@ -1,9 +1,6 @@
 package com.zup.propostas.controller;
 
-import com.zup.propostas.controller.dto.AvisoViagemRequest;
-import com.zup.propostas.controller.dto.BiometriaRequest;
-import com.zup.propostas.controller.dto.OrdemBloqueioApiRequest;
-import com.zup.propostas.controller.dto.OrdemBloqueioApiResponse;
+import com.zup.propostas.controller.dto.*;
 import com.zup.propostas.modelo.*;
 import com.zup.propostas.repository.AvisoViagemRepository;
 import com.zup.propostas.repository.BiometriaRepository;
@@ -95,6 +92,14 @@ public class CartaoController {
             return ResponseEntity.notFound().build();
         }
         Cartao cartao = possivelCartao.get();
+
+        try{
+            OrdemAvisoViagemApiRequest ordemAvisoViagemApiRequest = new OrdemAvisoViagemApiRequest(avisoViagemRequest.getDestinoViagem(),avisoViagemRequest.getTerminoViagem());
+            cartoesClient.avisaViagem(numeroCartao,ordemAvisoViagemApiRequest);
+        }catch (FeignException e){
+            System.out.println("excecao: "+e);
+            return ResponseEntity.internalServerError().build();
+        }
 
         AvisoViagem avisoViagem = avisoViagemRequest.toModel(ipAddress,userAgent,cartao);
         avisoViagemRepository.save(avisoViagem);

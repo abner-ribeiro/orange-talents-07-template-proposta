@@ -33,6 +33,10 @@ public class PropostaRequest {
         return new Proposta(documento,email,nome,endereco,salario);
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public String getDocumento() {
         return documento;
     }

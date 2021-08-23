@@ -7,6 +7,7 @@ import com.zup.propostas.modelo.ResultadoSolicitacao;
 import com.zup.propostas.repository.PropostaRepository;
 import com.zup.propostas.validacao.ErroDeFormularioDto;
 import feign.FeignException;
+import io.opentracing.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,12 @@ public class PropostaController {
     private PropostaRepository propostaRepository;
     @Autowired
     private AnaliseFinanceiraClient analiseFinanceiraClient;
+    @Autowired
+    private Tracer tracer;
 
     @PostMapping
     public ResponseEntity cadastrar(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriComponentsBuilder){
+        tracer.activeSpan().setTag("user.email",propostaRequest.getEmail());
         Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(propostaRequest.getDocumento());
 
         if(possivelProposta.isPresent()){

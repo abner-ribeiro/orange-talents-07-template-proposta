@@ -71,7 +71,7 @@ public class CartaoController {
             cartoesClient.bloqueiaCartao(numeroCartao,bloqueioRequest);
         }catch (FeignException e){
             System.out.println("excecao: "+e);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         bloqueioRepository.save(bloqueio);
         cartao.bloqueiaCartao();
@@ -98,7 +98,7 @@ public class CartaoController {
             cartoesClient.avisaViagem(numeroCartao,ordemAvisoViagemApiRequest);
         }catch (FeignException e){
             System.out.println("excecao: "+e);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         AvisoViagem avisoViagem = avisoViagemRequest.toModel(ipAddress,userAgent,cartao);
@@ -128,7 +128,7 @@ public class CartaoController {
             cartoesClient.associaCarteira(numeroCartao,ordemCarteiraDigitalApiRequest);
         }catch (FeignException e){
             System.out.println("excecao: "+e);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         carteiraRepository.save(carteira);

@@ -20,7 +20,7 @@ public class ScheduleCartao {
     private CartoesClient cartoesClient;
 
     @Scheduled(fixedDelay = 50000) //executa a cada 50 segundos (tempo sempre em milisegundos)
-    private void associaCartao(){
+    protected void associaCartao(){
         List<Proposta> propostasSemCartao = propostaRepository.findEligibleProposesWithoutCard();
 
         for (Proposta proposta: propostasSemCartao) {

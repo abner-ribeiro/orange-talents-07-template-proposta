@@ -24,16 +24,8 @@ public class ErroDeFormularioHandler {
     public List<ErroDeFormularioDto> handle(MethodArgumentNotValidException exception){
         List<ErroDeFormularioDto> dto = new ArrayList<>();
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-        List<ObjectError> classErrors = exception.getBindingResult().getAllErrors();
 
-        //Para um erro de classe não estava captando o erro então fiz essa solução provisória
-        //porque não pensei em nada melhor no momento.
-        if(exception.getFieldError() == null){
-            classErrors.forEach(e -> {
-                ErroDeFormularioDto erro = new ErroDeFormularioDto(e.getObjectName(), e.getDefaultMessage());
-                dto.add(erro);
-            });
-        }
+
         fieldErrors.forEach( e -> {
             String mensagem = messageSource.getMessage(e, LocaleContextHolder.getLocale());
             ErroDeFormularioDto erro = new ErroDeFormularioDto(e.getField(),mensagem);

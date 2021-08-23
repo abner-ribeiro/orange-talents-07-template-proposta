@@ -1,5 +1,5 @@
 package com.zup.propostas.modelo;
 
 public enum TipoCarteira {
-    PAYPAL
+    PAYPAL, SAMSUNG_PAY
 }

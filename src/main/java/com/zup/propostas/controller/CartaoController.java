@@ -2,10 +2,7 @@ package com.zup.propostas.controller;
 
 import com.zup.propostas.controller.dto.*;
 import com.zup.propostas.modelo.*;
-import com.zup.propostas.repository.AvisoViagemRepository;
-import com.zup.propostas.repository.BiometriaRepository;
-import com.zup.propostas.repository.BloqueioRepository;
-import com.zup.propostas.repository.CartaoRepository;
+import com.zup.propostas.repository.*;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,6 +29,8 @@ public class CartaoController {
     private CartoesClient cartoesClient;
     @Autowired
     private AvisoViagemRepository avisoViagemRepository;
+    @Autowired
+    private CarteiraRepository carteiraRepository;
 
     @PostMapping("/{numeroCartao}/biometrias")
     public ResponseEntity cadastrar(@PathVariable String numeroCartao, @RequestBody @Valid BiometriaRequest biometriaRequest, UriComponentsBuilder uriComponentsBuilder){
@@ -105,5 +105,35 @@ public class CartaoController {
         avisoViagemRepository.save(avisoViagem);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{numeroCartao}/carteiras")
+    public ResponseEntity associarCarteira(@PathVariable String numeroCartao, @RequestBody @Valid AssociarCarteiraRequest associarCarteiraRequest, UriComponentsBuilder uriComponentsBuilder){
+        Optional<Cartao> possivelCartao = cartaoRepository.findByNumeroCartao(numeroCartao);
+        if(possivelCartao.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        Cartao cartao = possivelCartao.get();
+        List<Carteira> carteirasAssociadas = carteiraRepository.findByStatusAndCartaoNumeroCartao(StatusCarteira.ATIVO, numeroCartao);
+
+        for (Carteira carteiraEncontrada: carteirasAssociadas) {
+            if(carteiraEncontrada.getTipoCarteira() == associarCarteiraRequest.getTipoCarteira()){
+                return ResponseEntity.unprocessableEntity().build();
+            }
+        }
+        Carteira carteira = associarCarteiraRequest.toModel(cartao);
+
+        try{
+            OrdemCarteiraDigitalApiRequest ordemCarteiraDigitalApiRequest = new OrdemCarteiraDigitalApiRequest(associarCarteiraRequest.getEmail(), associarCarteiraRequest.getTipoCarteira());
+            cartoesClient.associaCarteira(numeroCartao,ordemCarteiraDigitalApiRequest);
+        }catch (FeignException e){
+            System.out.println("excecao: "+e);
+            return ResponseEntity.internalServerError().build();
+        }
+
+        carteiraRepository.save(carteira);
+
+        URI uri = uriComponentsBuilder.path("/carteiras/{id}").buildAndExpand(carteira.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 }

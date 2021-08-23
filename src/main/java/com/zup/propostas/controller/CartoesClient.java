@@ -16,4 +16,7 @@ public interface CartoesClient {
 
     @PostMapping("${accounts.avisaViagemCartao}")
     OrdemAvisoViagemApiResponse avisaViagem(@PathVariable String id, OrdemAvisoViagemApiRequest ordemAvisoViagemApiRequest);
+
+    @PostMapping("${accounts.associaCarteira}")
+    OrdemCarteiraDigitalApiResponse associaCarteira(@PathVariable String id, OrdemCarteiraDigitalApiRequest ordemCarteiraDigitalApiRequest);
 }

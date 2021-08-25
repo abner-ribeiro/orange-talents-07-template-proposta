@@ -51,7 +51,7 @@ public class PropostaController {
         }
         propostaRepository.save(proposta);
 
-        URI uri = uriComponentsBuilder.path("propostas/{id}").buildAndExpand(1).toUri();
+        URI uri = uriComponentsBuilder.path("propostas/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 

@@ -1,6 +1,7 @@
 package com.zup.propostas.controller.dto;
 
 import com.zup.propostas.annotation.CpfCnpj;
+import com.zup.propostas.annotation.UniqueValue;
 import com.zup.propostas.modelo.Proposta;
 
 import javax.validation.constraints.Email;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 public class PropostaRequest {
     @NotBlank @CpfCnpj
     private String documento;
-    @NotBlank @Email
+    @NotBlank @Email @UniqueValue(fieldName = "email", domainClass = Proposta.class)
     private String email;
     @NotBlank
     private String nome;

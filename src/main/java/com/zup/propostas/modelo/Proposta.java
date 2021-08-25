@@ -1,6 +1,7 @@
 package com.zup.propostas.modelo;
 
 import com.zup.propostas.annotation.CpfCnpj;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -14,8 +15,7 @@ public class Proposta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
-    @CpfCnpj
+    @NotBlank @Column(unique = true)
     private String documento;
     @NotBlank @Email
     private String email;
@@ -38,7 +38,7 @@ public class Proposta {
     public Proposta(){};
 
     public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
-        this.documento = documento;
+        this.documento = BCrypt.hashpw(documento,BCrypt.gensalt());
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;

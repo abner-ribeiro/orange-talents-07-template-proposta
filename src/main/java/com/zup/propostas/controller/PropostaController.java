@@ -11,6 +11,7 @@ import io.opentracing.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -31,14 +32,14 @@ public class PropostaController {
     @PostMapping
     public ResponseEntity cadastrar(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uriComponentsBuilder){
         tracer.activeSpan().setTag("user.email",propostaRequest.getEmail());
-        Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(propostaRequest.getDocumento());
+        Proposta proposta = propostaRequest.toModel();
+        Optional<Proposta> possivelProposta = propostaRepository.findByEmail(proposta.getEmail());
 
-        if(possivelProposta.isPresent()){
+        if(possivelProposta.isPresent() && BCrypt.checkpw(propostaRequest.getDocumento(), possivelProposta.get().getDocumento())){
             ErroDeFormularioDto erro = new ErroDeFormularioDto("documento","Já existe uma proposta cadastrada para esse CPF/CNPJ");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(erro);
         }
 
-        Proposta proposta = propostaRequest.toModel();
         propostaRepository.save(proposta);
 
         try {
@@ -50,7 +51,7 @@ public class PropostaController {
         }
         propostaRepository.save(proposta);
 
-        URI uri = uriComponentsBuilder.path("propostas/{id}").buildAndExpand(proposta.getId()).toUri();
+        URI uri = uriComponentsBuilder.path("propostas/{id}").buildAndExpand(1).toUri();
         return ResponseEntity.created(uri).build();
     }
 
